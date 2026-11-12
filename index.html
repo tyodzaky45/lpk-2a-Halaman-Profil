@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Profil Pribadi dengan HTML5 & CSS - Tyo Dzaky Firmansyah</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            950: '#060913',
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 8s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -40px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden relative">
+
+    <!-- Latar Belakang Ambient Glow (Neon Cyan & Emerald) -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-blob"></div>
+        <div class="absolute top-[30%] right-[-5%] w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-[-10%] left-[20%] w-96 h-96 bg-teal-600/10 rounded-full blur-3xl animate-blob" style="animation-delay: 4s;"></div>
+        <!-- Grid halus latar belakang -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20"></div>
+    </div>
+
+    <!-- Navigasi Utama (Glassmorphism Sticky Navbar) -->
+    <header class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md bg-slate-950/75 border-b border-slate-800/80">
+        <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand / Logo -->
+            <a href="#beranda" class="flex items-center gap-2.5 group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-slate-950 font-bold font-mono text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+                    TD
+                </div>
+                <span class="font-bold text-lg tracking-tight text-white">
+                    Tyo<span class="text-cyan-400">.dev</span>
+                </span>
+            </a>
+
+            <!-- Menu Desktop -->
+            <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <li><a href="#beranda" class="nav-link hover:text-cyan-400 transition-colors py-1">Beranda</a></li>
+                <li><a href="#tentang" class="nav-link hover:text-cyan-400 transition-colors py-1">Tentang Saya</a></li>
+                <li><a href="#keahlian" class="nav-link hover:text-cyan-400 transition-colors py-1">Keahlian</a></li>
+                <li><a href="#proyek" class="nav-link hover:text-cyan-400 transition-colors py-1">Proyek</a></li>
+                <li>
+                    <a href="#kontak" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-semibold hover:opacity-90 transition-all shadow-md shadow-cyan-500/20">
+                        Hubungi Saya
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tombol Hamburger Mobile -->
+            <button id="mobile-menu-btn" aria-label="Buka Menu" class="md:hidden p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-cyan-400 focus:outline-none">
+                <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+            </button>
+        </nav>
+
+        <!-- Dropdown Menu Mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 px-4 pt-3 pb-6 space-y-2">
+            <a href="#beranda" class="mobile-link block px-4 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800/80 hover:text-cyan-400 font-medium">Beranda</a>
+            <a href="#tentang" class="mobile-link block px-4 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800/80 hover:text-cyan-400 font-medium">Tentang Saya</a>
+            <a href="#keahlian" class="mobile-link block px-4 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800/80 hover:text-cyan-400 font-medium">Keahlian Teknis</a>
+            <a href="#proyek" class="mobile-link block px-4 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800/80 hover:text-cyan-400 font-medium">Portofolio Proyek</a>
+            <a href="#kontak" class="mobile-link block px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-semibold text-center mt-2">Hubungi Saya</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- ==================== HERO SECTION ==================== -->
+        <section id="beranda" class="min-h-screen flex items-center pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
+                <!-- Kolom Kiri: Teks & CTA -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/30 text-cyan-400 text-xs sm:text-sm font-mono shadow-inner">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>Mahasiswa Teknik Informatika &bull; Kelas TI24E</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                        Halo, Saya <br class="hidden sm:inline">
+                        <span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
+                            Tyo Dzaky Firmansyah
+                        </span>
+                    </h1>
+
+                    <!-- Efek Typing Dinamis -->
+                    <div class="h-9 sm:h-10 flex items-center justify-center lg:justify-start font-mono text-base sm:text-xl text-slate-300">
+                        <span class="text-emerald-400 mr-2">&gt;</span>
+                        <span id="typing-text" class="text-cyan-300 font-semibold"></span>
+                        <span class="w-0.5 h-6 bg-cyan-400 ml-1 animate-pulse"></span>
+                    </div>
+
+                    <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Membangun solusi perangkat lunak yang efisien dan terstruktur—mulai dari aplikasi web dinamis berbasis <span class="text-slate-200 font-medium">PHP &amp; HTML5</span>, pemrosesan sinyal audio serta citra menggunakan <span class="text-slate-200 font-medium">Python AI</span>, hingga arsitektur basis data relasional <span class="text-slate-200 font-medium">MySQL</span>.
+                    </p>
+
+                    <!-- Tombol Aksi -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#proyek" class="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-bold text-sm sm:text-base hover:shadow-lg hover:shadow-cyan-500/30 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-rocket"></i>
+                            <span>Lihat Portofolio</span>
+                        </a>
+                        <a href="#tentang" class="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-slate-900/80 border border-slate-700/80 hover:border-cyan-500/50 text-slate-200 font-semibold text-sm sm:text-base hover:bg-slate-800/80 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-user-astronaut text-cyan-400"></i>
+                            <span>Kenali Lebih Dekat</span>
+                        </a>
+                    </div>
+
+                    <!-- Statistik Singkat -->
+                    <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80 max-w-md mx-auto lg:mx-0">
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-white">TI24E</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Teknik Informatika</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-cyan-400">4+</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Proyek Unggulan</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-emerald-400">3</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Bidang Spesialisasi</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Kartu Profil Glassmorphism -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-sm">
+                        <!-- Efek Cincin Neon -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-3xl blur opacity-30 animate-pulse-slow"></div>
+                        
+                        <div class="relative bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+                            <!-- Header Window Bergaya Terminal -->
+                            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800/80">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+                                    <span class="w-3 h-3 rounded-full bg-amber-400/80"></span>
+                                    <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">profil_tyo.json</span>
+                            </div>
+
+                            <!-- Avatar / Ilustrasi Profil -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="relative mb-5">
+                                    <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 border-2 border-cyan-400/50 flex items-center justify-center overflow-hidden shadow-lg shadow-cyan-500/10">
+                                        <!-- SVG Avatar Modern -->
+                                        <svg class="w-20 h-20 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+                                        </svg>
+                                    </div>
+                                    <span class="absolute -bottom-2 -right-2 px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold shadow-md">
+                                        Aktif
+                                    </span>
+                                </div>
+
+                                <h2 class="text-xl font-bold text-white">Tyo Dzaky Firmansyah</h2>
+                                <p class="text-sm text-cyan-400 font-mono mt-1">Web &amp; Python Developer</p>
+
+                                <!-- Cuplikan Kode Bio -->
+                                <div class="w-full mt-5 p-4 rounded-2xl bg-slate-950/90 border border-slate-800/90 text-left font-mono text-xs space-y-1.5 text-slate-300">
+                                    <p><span class="text-cyan-400">"kelas"</span>: <span class="text-emerald-300">"TI24E"</span>,</p>
+                                    <p><span class="text-cyan-400">"fokus"</span>: [</p>
+                                    <p class="pl-4 text-amber-200">"Web Dev (PHP/HTML/CSS)",</p>
+                                    <p class="pl-4 text-amber-200">"Python AI &amp; Kriptografi",</p>
+                                    <p class="pl-4 text-amber-200">"Database &amp; ERD MySQL"</p>
+                                    <p>]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TENTANG SAYA ==================== -->
+        <section id="tentang" class="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-xl">
+                <div class="flex flex-col md:flex-row gap-10 items-start">
+                    <div class="md:w-1/3 space-y-3">
+                        <span class="text-xs font-mono uppercase tracking-widest text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full">
+                            01. Profil Singkat
+                        </span>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Tentang Saya</h2>
+                        <div class="w-16 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400"></div>
+                        <p class="text-sm text-slate-400 pt-2">
+                            Berdedikasi menggabungkan logika algoritma, struktur data yang bersih, dan antarmuka modern.
+                        </p>
+                    </div>
+
+                    <div class="md:w-2/3 space-y-5 text-slate-300 leading-relaxed text-base">
+                        <p>
+                            Perkenalkan, saya <strong class="text-white">Tyo Dzaky Firmansyah</strong>, mahasiswa aktif Program Studi <strong class="text-cyan-400">Teknik Informatika (Kelas TI24E)</strong> yang memiliki ketertarikan mendalam pada rekayasa perangkat lunak, pengolahan multimedia berbasis kecerdasan buatan, serta perancangan sistem basis data yang andal.
+                        </p>
+                        <p>
+                            Dalam pengembangan web, saya terbiasa membangun sistem informasi dinamis menggunakan <strong class="text-white">PHP, HTML5, dan CSS modern</strong> dengan perhatian khusus pada keterbacaan kode dan pengalaman pengguna yang responsif. Di sisi lain, eksplorasi saya pada ekosistem <strong class="text-emerald-400">Python</strong> mencakup pemisahan instrumen audio (<em>source separation</em>) menggunakan <strong>Demucs</strong>, pengolahan dan peningkatan resolusi citra dengan <strong>OpenCV</strong> serta <strong>Real-ESRGAN</strong>, hingga implementasi algoritma <strong>kriptografi</strong>.
+                        </p>
+
+                        <!-- 3 Pilar Keunggulan -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                            <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-cyan-500/40 transition-colors">
+                                <i class="fa-solid fa-code text-cyan-400 text-xl mb-2"></i>
+                                <h3 class="font-bold text-white text-sm">Clean Web Architecture</h3>
+                                <p class="text-xs text-slate-400 mt-1">Struktur semantik HTML5, CSS responsif, dan backend PHP terorganisir.</p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-emerald-500/40 transition-colors">
+                                <i class="fa-solid fa-wave-square text-emerald-400 text-xl mb-2"></i>
+                                <h3 class="font-bold text-white text-sm">AI Audio &amp; Vision</h3>
+                                <p class="text-xs text-slate-400 mt-1">Otomasi pemrosesan audio Demucs &amp; restorasi gambar Real-ESRGAN.</p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-teal-500/40 transition-colors">
+                                <i class="fa-solid fa-database text-teal-400 text-xl mb-2"></i>
+                                <h3 class="font-bold text-white text-sm">Relasional &amp; Normalisasi</h3>
+                                <p class="text-xs text-slate-400 mt-1">Perancangan ERD presisi dan optimasi query basis data MySQL.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== KEAHLIAN TEKNIS ==================== -->
+        <section id="keahlian" class="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-14 space-y-3">
+                <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+                    02. Kompetensi &amp; Teknologi
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Keahlian Teknis</h2>
+                <p class="text-slate-400 text-sm sm:text-base">
+                    Kombinasi teknologi pengembangan web, pemrosesan multimedia Python, dan manajemen basis data relasional.
+                </p>
+            </div>
+
+            <!-- Grid Kategori Keahlian -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Kartu 1: Pengembangan Web -->
+                <div class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-7 hover:border-cyan-500/50 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Pengembangan Web</h3>
+                    <p class="text-xs text-slate-400 mb-6">Membangun antarmuka modern dan sistem backend dinamis.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">HTML5 &amp; CSS3 / Tailwind</span>
+                                <span class="text-cyan-400 font-mono">92%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">PHP (Native &amp; CRUD Sistem)</span>
+                                <span class="text-cyan-400 font-mono">88%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">JavaScript Interaktif</span>
+                                <span class="text-cyan-400 font-mono">80%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Badge Interaktif -->
+                    <div class="flex flex-wrap gap-2 mt-6 pt-5 border-t border-slate-800/80">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-cyan-300 hover:border-cyan-400 transition-colors cursor-default">HTML5</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-cyan-300 hover:border-cyan-400 transition-colors cursor-default">CSS3</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-cyan-300 hover:border-cyan-400 transition-colors cursor-default">PHP 8</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-cyan-300 hover:border-cyan-400 transition-colors cursor-default">Tailwind CSS</span>
+                    </div>
+                </div>
+
+                <!-- Kartu 2: Pemrograman Python & AI -->
+                <div class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-7 hover:border-emerald-500/50 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-brands fa-python"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Pemrograman Python</h3>
+                    <p class="text-xs text-slate-400 mb-6">Pengolahan sinyal audio, visi komputer, &amp; keamanan kriptografi.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">Audio Separation (Demucs)</span>
+                                <span class="text-emerald-400 font-mono">86%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-300 rounded-full" style="width: 86%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">OpenCV &amp; Real-ESRGAN</span>
+                                <span class="text-emerald-400 font-mono">84%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-300 rounded-full" style="width: 84%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">Algoritma Kriptografi</span>
+                                <span class="text-emerald-400 font-mono">90%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-300 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mt-6 pt-5 border-t border-slate-800/80">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-300 hover:border-emerald-400 transition-colors cursor-default">Demucs</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-300 hover:border-emerald-400 transition-colors cursor-default">OpenCV</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-300 hover:border-emerald-400 transition-colors cursor-default">Real-ESRGAN</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-300 hover:border-emerald-400 transition-colors cursor-default">Kriptografi</span>
+                    </div>
+                </div>
+
+                <!-- Kartu 3: Manajemen Basis Data -->
+                <div class="bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-7 hover:border-teal-500/50 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-2xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400 text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Manajemen Basis Data</h3>
+                    <p class="text-xs text-slate-400 mb-6">Perancangan skema relasional yang terstruktur dan bebas redundansi.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">MySQL &amp; Query Relasional</span>
+                                <span class="text-teal-300 font-mono">89%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full" style="width: 89%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">Entity Relationship Diagram (ERD)</span>
+                                <span class="text-teal-300 font-mono">91%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full" style="width: 91%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-slate-200">Normalisasi Data (1NF - 3NF)</span>
+                                <span class="text-teal-300 font-mono">87%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full" style="width: 87%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mt-6 pt-5 border-t border-slate-800/80">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-teal-300 hover:border-teal-400 transition-colors cursor-default">MySQL</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-teal-300 hover:border-teal-400 transition-colors cursor-default">ERD</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-teal-300 hover:border-teal-400 transition-colors cursor-default">Normalisasi</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-teal-300 hover:border-teal-400 transition-colors cursor-default">SQL JOIN</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PORTOFOLIO PROYEK UNGGULAN ==================== -->
+        <section id="proyek" class="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div class="space-y-3">
+                    <span class="text-xs font-mono uppercase tracking-widest text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full">
+                        03. Karya &amp; Implementasi
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Portofolio Proyek Unggulan</h2>
+                    <p class="text-slate-400 text-sm sm:text-base max-w-xl">
+                        Beberapa proyek terpilih yang mencerminkan eksplorasi saya pada pengembangan web, Python AI, kriptografi, dan basis data.
+                    </p>
+                </div>
+
+                <!-- Filter Kategori Proyek -->
+                <div class="flex flex-wrap gap-2" id="project-filters">
+                    <button data-filter="all" class="filter-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-cyan-500 text-slate-950 transition-all">
+                        Semua
+                    </button>
+                    <button data-filter="web" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 text-slate-300 border border-slate-800 hover:border-cyan-500/50 transition-all">
+                        Web &amp; Database
+                    </button>
+                    <button data-filter="python" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 text-slate-300 border border-slate-800 hover:border-emerald-500/50 transition-all">
+                        Python &amp; AI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid Kartu Proyek -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="projects-grid">
+
+                <!-- Proyek 1: Sistem Informasi Perpustakaan -->
+                <article data-category="web" class="project-card bg-slate-900/75 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden hover:border-cyan-500/50 transition-all duration-300 flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <!-- Banner Visual SVG / Gradient -->
+                        <div class="h-48 bg-gradient-to-br from-cyan-950 via-slate-900 to-emerald-950 p-6 flex items-center justify-between relative overflow-hidden border-b border-slate-800">
+                            <div class="space-y-2 z-10">
+                                <span class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-xs font-mono">
+                                    Full-Stack Web
+                                </span>
+                                <h4 class="text-lg font-bold text-white">E-Library Management</h4>
+                            </div>
+                            <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform z-10">
+                                <i class="fa-solid fa-book-open-reader"></i>
+                            </div>
+                            <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl"></div>
+                        </div>
+
+                        <div class="p-6 sm:p-7 space-y-4">
+                            <h3 class="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                                Sistem Informasi Perpustakaan Berbasis PHP &amp; Tailwind
+                            </h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Aplikasi manajemen sirkulasi buku perpustakaan digital yang mendukung pencatatan anggota, katalog koleksi buku, transaksi peminjaman &amp; pengembalian otomatis, serta perhitungan denda keterlambatan secara akurat.
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-cyan-300 border border-slate-800">PHP</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-cyan-300 border border-slate-800">Tailwind CSS</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-cyan-300 border border-slate-800">MySQL</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-cyan-300 border border-slate-800">HTML5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 sm:px-7 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/60">
+                        <span class="text-xs font-mono text-slate-500">Status: Selesai</span>
+                        <button onclick="openProjectModal('perpustakaan')" class="text-sm font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 group/btn">
+                            <span>Detail Arsitektur</span>
+                            <i class="fa-solid fa-arrow-right text-xs group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Proyek 2: Audio Source Separation dengan Demucs -->
+                <article data-category="python" class="project-card bg-slate-900/75 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <div class="h-48 bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 p-6 flex items-center justify-between relative overflow-hidden border-b border-slate-800">
+                            <div class="space-y-2 z-10">
+                                <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-mono">
+                                    Deep Learning Audio
+                                </span>
+                                <h4 class="text-lg font-bold text-white">Stem Audio Splitter</h4>
+                            </div>
+                            <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 text-3xl group-hover:scale-110 group-hover:-rotate-3 transition-transform z-10">
+                                <i class="fa-solid fa-sliders"></i>
+                            </div>
+                            <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                        </div>
+
+                        <div class="p-6 sm:p-7 space-y-4">
+                            <h3 class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+                                Audio Source Separation dengan Demucs
+                            </h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Pipeline pemrosesan audio berbasis Python yang memanfaatkan arsitektur Hybrid Transformer Demucs untuk memisahkan trek musik campuran menjadi empat komponen terpisah: vokal, drum, bass, dan instrumen lainnya.
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800">Python</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800">Demucs AI</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800">PyTorch</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800">Audio DSP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 sm:px-7 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/60">
+                        <span class="text-xs font-mono text-slate-500">4-Stem Separation</span>
+                        <button onclick="openProjectModal('demucs')" class="text-sm font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 group/btn">
+                            <span>Detail Arsitektur</span>
+                            <i class="fa-solid fa-arrow-right text-xs group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Proyek 3: Aplikasi Enkripsi Caesar Cipher Python -->
+                <article data-category="python" class="project-card bg-slate-900/75 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden hover:border-cyan-500/50 transition-all duration-300 flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <div class="h-48 bg-gradient-to-br from-slate-900 via-cyan-950/70 to-slate-900 p-6 flex items-center justify-between relative overflow-hidden border-b border-slate-800">
+                            <div class="space-y-2 z-10">
+                                <span class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-xs font-mono">
+                                    Kriptografi Klasik
+                                </span>
+                                <h4 class="text-lg font-bold text-white">CipherGuard CLI &amp; GUI</h4>
+                            </div>
+                            <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 text-3xl group-hover:scale-110 transition-transform z-10">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl"></div>
+                        </div>
+
+                        <div class="p-6 sm:p-7 space-y-4">
+                            <h3 class="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                                Aplikasi Enkripsi Caesar Cipher Python
+                            </h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Perangkat lunak keamanan teks berbasis Python untuk melakukan proses enkripsi (<em>plaintext ke ciphertext</em>) dan dekripsi menggunakan pergeseran kunci dinamis, dilengkapi fitur analisis frekuensi dan brute-force key recovery.
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-cyan-300 border border-slate-800">Python 3</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-cyan-300 border border-slate-800">Kriptografi</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-cyan-300 border border-slate-800">Modulo Math</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 sm:px-7 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/60">
+                        <span class="text-xs font-mono text-slate-500">Enkripsi &amp; Dekripsi</span>
+                        <button onclick="openProjectModal('cipher')" class="text-sm font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 group/btn">
+                            <span>Detail Arsitektur</span>
+                            <i class="fa-solid fa-arrow-right text-xs group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Proyek 4: Desain Basis Data Relasional -->
+                <article data-category="web" class="project-card bg-slate-900/75 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <div class="h-48 bg-gradient-to-br from-slate-900 via-emerald-950/70 to-slate-900 p-6 flex items-center justify-between relative overflow-hidden border-b border-slate-800">
+                            <div class="space-y-2 z-10">
+                                <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-mono">
+                                    Arsitektur Data
+                                </span>
+                                <h4 class="text-lg font-bold text-white">Relational DB &amp; 3NF</h4>
+                            </div>
+                            <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 text-3xl group-hover:scale-110 transition-transform z-10">
+                                <i class="fa-solid fa-diagram-project"></i>
+                            </div>
+                            <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                        </div>
+
+                        <div class="p-6 sm:p-7 space-y-4">
+                            <h3 class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+                                Desain Basis Data Relasional &amp; Normalisasi
+                            </h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Pemodelan konseptual dan logis menggunakan Entity Relationship Diagram (ERD), penerapan aturan normalisasi hingga bentuk normal ketiga (3NF) untuk mencegah anomali data, serta implementasi skema DDL/DML pada MySQL.
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800">MySQL</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800">ERD Modeling</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800">Normalisasi 3NF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 sm:px-7 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/60">
+                        <span class="text-xs font-mono text-slate-500">Integritas Referensial</span>
+                        <button onclick="openProjectModal('database')" class="text-sm font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 group/btn">
+                            <span>Detail Arsitektur</span>
+                            <i class="fa-solid fa-arrow-right text-xs group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- ==================== KONTAK & FORMULIR INTERAKTIF ==================== -->
+        <section id="kontak" class="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+            <div class="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-cyan-950/30 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-2xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    
+                    <!-- Informasi Kontak Kiri -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+                            04. Mari Berkolaborasi
+                        </span>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Hubungi Saya</h2>
+                        <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+                            Tertarik berdiskusi mengenai pengembangan website, proyek Python AI, atau perancangan basis data? Silakan kirimkan pesan melalui formulir di samping.
+                        </p>
+
+                        <div class="space-y-4 pt-2">
+                            <div class="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800">
+                                <div class="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400">Program Studi</p>
+                                    <p class="text-sm font-semibold text-white">Teknik Informatika (TI24E)</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs text-slate-400">Email Akademik &amp; Proyek</p>
+                                    <p class="text-sm font-semibold text-white truncate" id="email-text">tyo.dzaky@informatika.ac.id</p>
+                                </div>
+                                <button onclick="copyEmail()" title="Salin Email" class="ml-auto p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-cyan-400 transition-colors">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800">
+                                <div class="w-10 h-10 rounded-xl bg-teal-500/15 text-teal-400 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400">Lokasi</p>
+                                    <p class="text-sm font-semibold text-white">Indonesia</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulir Interaktif Kanan -->
+                    <div class="lg:col-span-7">
+                        <form id="contact-form" class="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-6 sm:p-8 space-y-5">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label for="nama" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nama Lengkap</label>
+                                    <input type="text" id="nama" name="nama" required placeholder="Masukkan nama Anda"
+                                        class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Alamat Email</label>
+                                    <input type="email" id="email" name="email" required placeholder="nama@email.com"
+                                        class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="subjek" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Topik Diskusi</label>
+                                <select id="subjek" name="subjek"
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all">
+                                    <option value="Pengembangan Web (PHP / HTML5 / CSS)">Pengembangan Web (PHP / HTML5 / CSS)</option>
+                                    <option value="Pemrograman Python (Audio / OpenCV / Kriptografi)">Pemrograman Python (Audio / OpenCV / Kriptografi)</option>
+                                    <option value="Perancangan Basis Data MySQL & ERD">Perancangan Basis Data MySQL &amp; ERD</option>
+                                    <option value="Kolaborasi Proyek / Lainnya">Kolaborasi Proyek / Lainnya</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="pesan" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Pesan Anda</label>
+                                <textarea id="pesan" name="pesan" rows="4" required placeholder="Tuliskan detail pesan atau kolaborasi yang Anda inginkan..."
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all resize-none"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-bold text-sm sm:text-base hover:opacity-95 hover:shadow-lg hover:shadow-cyan-500/25 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Kirim Pesan Sekarang</span>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="border-t border-slate-800/80 bg-slate-950/90 py-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                <p>&copy; 2026 <strong class="text-white">Tyo Dzaky Firmansyah</strong> &mdash; TI24E.</p>
+            </div>
+            <p class="text-xs font-mono text-slate-500">
+                Halaman Profil Pribadi dengan HTML5 &amp; CSS
+            </p>
+            <div class="flex items-center gap-4">
+                <a href="#beranda" aria-label="Kembali ke atas" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 transition-all">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== MODAL DETAIL PROYEK ==================== -->
+    <div id="project-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative transform transition-all">
+            <button onclick="closeProjectModal()" aria-label="Tutup Modal" class="absolute top-5 right-5 w-9 h-9 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <span id="modal-badge" class="px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 text-xs font-mono">Kategori</span>
+            <h3 id="modal-title" class="text-2xl font-bold text-white mt-3">Judul Proyek</h3>
+            <p id="modal-desc" class="text-sm text-slate-300 leading-relaxed mt-3">Deskripsi proyek.</p>
+            
+            <div class="mt-5 p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                <h4 class="text-xs font-mono uppercase text-emerald-400 mb-2">Fitur &amp; Implementasi Teknis:</h4>
+                <ul id="modal-features" class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside"></ul>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeProjectModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-bold text-sm">
+                    Tutup Pratinjau
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST / MESSAGE BOX NOTIFIKASI ==================== -->
+    <div id="toast-box" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900/95 backdrop-blur-xl border border-emerald-500/50 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3.5 max-w-sm">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-circle-check text-lg"></i>
+            </div>
+            <div>
+                <h4 id="toast-title" class="text-sm font-bold text-white">Berhasil!</h4>
+                <p id="toast-message" class="text-xs text-slate-300 mt-0.5">Pesan Anda telah terkirim.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPT INTERAKTIF ==================== -->
+    <script>
+        // 1. Efek Typing Dinamis di Hero Section
+        const roles = [
+            "Web Developer (PHP, HTML5 & CSS)",
+            "Python AI & Multimedia Enthusiast",
+            "Database & ERD Architect (MySQL)",
+            "Mahasiswa Teknik Informatika TI24E"
+        ];
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingEl = document.getElementById("typing-text");
+
+        function typeEffect() {
+            const currentRole = roles[roleIndex];
+            if (isDeleting) {
+                typingEl.textContent = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingEl.textContent = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let speed = isDeleting ? 40 : 80;
+
+            if (!isDeleting && charIndex === currentRole.length) {
+                speed = 2000; // Jeda sebelum menghapus
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                speed = 400;
+            }
+
+            setTimeout(typeEffect, speed);
+        }
+
+        // 2. Toggle Menu Navigasi Mobile
+        const mobileBtn = document.getElementById("mobile-menu-btn");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const menuIcon = document.getElementById("menu-icon");
+
+        mobileBtn.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+            if (mobileMenu.classList.contains("hidden")) {
+                menuIcon.classList.replace("fa-xmark", "fa-bars");
+            } else {
+                menuIcon.classList.replace("fa-bars", "fa-xmark");
+            }
+        });
+
+        document.querySelectorAll(".mobile-link").forEach(link => {
+            link.addEventListener("click", () => {
+                mobileMenu.classList.add("hidden");
+                menuIcon.classList.replace("fa-xmark", "fa-bars");
+            });
+        });
+
+        // 3. Filter Portofolio Proyek
+        const filterBtns = document.querySelectorAll(".filter-btn");
+        const projectCards = document.querySelectorAll(".project-card");
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                // Reset gaya semua tombol
+                filterBtns.forEach(b => {
+                    b.classList.remove("bg-cyan-500", "text-slate-950");
+                    b.classList.add("bg-slate-900", "text-slate-300", "border", "border-slate-800");
+                });
+                // Aktifkan tombol yang diklik
+                btn.classList.remove("bg-slate-900", "text-slate-300", "border", "border-slate-800");
+                btn.classList.add("bg-cyan-500", "text-slate-950");
+
+                const filter = btn.getAttribute("data-filter");
+                projectCards.forEach(card => {
+                    if (filter === "all" || card.getAttribute("data-category") === filter) {
+                        card.classList.remove("hidden");
+                    } else {
+                        card.classList.add("hidden");
+                    }
+                });
+            });
+        });
+
+        // 4. Data & Fungsi Modal Detail Proyek
+        const projectDetails = {
+            perpustakaan: {
+                badge: "Web & Database • PHP & Tailwind",
+                title: "Sistem Informasi Perpustakaan",
+                desc: "Sistem manajemen perpustakaan terpadu untuk mempermudah pustakawan dan anggota dalam mengelola katalog buku, sirkulasi peminjaman, serta pelaporan statistik koleksi.",
+                features: [
+                    "Autentikasi multi-role (Admin Pustakawan & Anggota)",
+                    "CRUD katalog buku lengkap dengan pencarian real-time",
+                    "Otomatisasi perhitungan tanggal jatuh tempo & denda",
+                    "Antarmuka responsif dibangun dengan HTML5 & Tailwind CSS"
+                ]
+            },
+            demucs: {
+                badge: "Python AI • Audio Processing",
+                title: "Audio Source Separation dengan Demucs",
+                desc: "Implementasi model deep learning Hybrid Transformer Demucs berbasis Python untuk memisahkan campuran sinyal audio stereo menjadi empat jalur instrumen independen berkualitas tinggi.",
+                features: [
+                    "Ekstraksi 4 stem terpisah: Vocals, Drums, Bass, dan Other",
+                    "Dukungan pemrosesan batch file audio format WAV & MP3",
+                    "Optimasi pemrosesan menggunakan PyTorch tensor",
+                    "Integrasi pra-pemrosesan audio untuk keperluan remix & analisis akustik"
+                ]
+            },
+            cipher: {
+                badge: "Python • Keamanan & Kriptografi",
+                title: "Aplikasi Enkripsi Caesar Cipher Python",
+                desc: "Aplikasi keamanan informasi yang mengimplementasikan algoritma substitusi Caesar Cipher berbasis operasi aritmatika modulo 26 untuk mengamankan pesan teks.",
+                features: [
+                    "Enkripsi dan dekripsi cepat dengan pergeseran kunci (shift) kustom",
+                    "Mempertahankan karakter non-alfabet, spasi, dan kapitalisasi huruf",
+                    "Mode analisis dekripsi otomatis untuk pengujian ketahanan sandi",
+                    "Struktur kode modular Python yang bersih dan mudah dikembangkan"
+                ]
+            },
+            database: {
+                badge: "MySQL • Arsitektur Basis Data",
+                title: "Desain Basis Data Relasional & Normalisasi",
+                desc: "Perancangan arsitektur basis data relasional mulai dari pemetaan kebutuhan entitas hingga normalisasi tabel tingkat lanjut untuk menjamin integritas data.",
+                features: [
+                    "Pembuatan Entity Relationship Diagram (ERD) & kardinalitas relasi",
+                    "Proses normalisasi bertahap dari Unnormalized Form ke 1NF, 2NF, hingga 3NF",
+                    "Penerapan Primary Key, Foreign Key, dan constraint integritas referensial",
+                    "Optimasi query SQL kompleks menggunakan INNER/LEFT JOIN dan indexing"
+                ]
+            }
+        };
+
+        const modal = document.getElementById("project-modal");
+
+        function openProjectModal(key) {
+            const data = projectDetails[key];
+            if (!data) return;
+
+            document.getElementById("modal-badge").textContent = data.badge;
+            document.getElementById("modal-title").textContent = data.title;
+            document.getElementById("modal-desc").textContent = data.desc;
+
+            const featureList = document.getElementById("modal-features");
+            featureList.innerHTML = "";
+            data.features.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                featureList.appendChild(li);
+            });
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeProjectModal() {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        // Tutup modal jika klik di luar kartu
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeProjectModal();
+        });
+
+        // 5. Notifikasi Toast & Salin Email
+        function showToast(title, message) {
+            const toast = document.getElementById("toast-box");
+            document.getElementById("toast-title").textContent = title;
+            document.getElementById("toast-message").textContent = message;
+
+            toast.classList.remove("translate-y-24", "opacity-0", "pointer-events-none");
+            setTimeout(() => {
+                toast.classList.add("translate-y-24", "opacity-0", "pointer-events-none");
+            }, 3800);
+        }
+
+        function copyEmail() {
+            const emailText = document.getElementById("email-text").textContent;
+            const tempInput = document.createElement("input");
+            tempInput.value = emailText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast("Email Disalin!", `${emailText} berhasil disalin ke papan klip.`);
+        }
+
+        // 6. Penanganan Formulir Kontak Interaktif
+        document.getElementById("contact-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const nama = document.getElementById("nama").value.trim();
+            const subjek = document.getElementById("subjek").value;
+
+            showToast(
+                `Terima kasih, ${nama}!`,
+                `Pesan terkait "${subjek}" telah berhasil dikirim ke Tyo Dzaky Firmansyah.`
+            );
+            this.reset();
+        });
+
+        // Jalankan animasi saat halaman dimuat
+        window.addEventListener("DOMContentLoaded", () => {
+            typeEffect();
+        });
+    </script>
+</body>
+</html>
